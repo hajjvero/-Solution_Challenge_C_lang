@@ -5,7 +5,7 @@ int main(void)
     int first, last, gcd = 0;
 
     printf("Entrez udeux entiers : ");
-    scanf("%d %d", &first, &last);
+    scanf("%d%*[/]%d", &first, &last);
 
     int min = first > last ? last : first;
    
@@ -22,5 +22,10 @@ int main(void)
         }
     }
 
-    printf("Le plus grand commun diviseur est : %d", gcd);
+    int newF, newL;
+
+    newF = first / gcd;
+    newL = last / gcd;
+
+    printf("Sous s forme la plus simple: %d/%d", newF, newL);
 }
