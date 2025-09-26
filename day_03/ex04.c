@@ -14,7 +14,8 @@ int main(void)
 
     printf("Dns l'order inverse :");
     // int count
-    for (i = N; i >= 0; i--)
+    int length = (int) sizeof(a) / sizeof(a[0]);
+    for (i = length - 1; i >= 0; i--)
     {
         printf(" %d", a[i]);
     }
