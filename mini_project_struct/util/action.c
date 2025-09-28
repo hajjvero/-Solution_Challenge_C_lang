@@ -5,84 +5,79 @@
 #include "action.h"
 #include "display.h"
 
-static ActionCollection collection;
+ActionCollection actionCollection;
 
 void initActionCollection()
 {
-    collection.actions = (Action *)malloc(1 * sizeof(Action));
-    if (collection.actions == NULL)
+    actionCollection.actions = (Action *)malloc(1 * sizeof(Action));
+    if (actionCollection.actions == NULL)
     {
         displayDanger("Memory allocation failure.\n");
         exit(1);
     }
 
-    collection.count = 0;
-    collection.capacity = 1;
+    actionCollection.count = 0;
+    actionCollection.capacity = 1;
 }
 
 void addAction(const char *title, int root, void (*callback)())
 {
     // Check if the collection is full
-    if (collection.count >= collection.capacity)
+    if (actionCollection.count >= actionCollection.capacity)
     {
         // Increment capacity of action
-        Action *newActions = (Action *)realloc(collection.actions, (++collection.capacity) * sizeof(Action));
+        Action *newActions = (Action *)realloc(actionCollection.actions, (++actionCollection.capacity) * sizeof(Action));
         if (newActions == NULL)
         {
             displayDanger("Memory allocation failure.\n");
             exit(1);
         }
 
-        collection.actions = newActions;
+        actionCollection.actions = newActions;
     }
 
     // Add the new action
     // Use strdup to dynamically allocate and copy the title string
-    collection.actions[collection.count].title = strdup(title);
-    if (collection.actions[collection.count].title == NULL)
+    actionCollection.actions[actionCollection.count].title = strdup(title);
+    if (actionCollection.actions[actionCollection.count].title == NULL)
     {
         displayDanger("Memory allocation failure.\n");
         exit(1);
     }
-    collection.actions[collection.count].root = root;
-    collection.actions[collection.count].callback = callback;
-    collection.count++;
+    actionCollection.actions[actionCollection.count].root = root;
+    actionCollection.actions[actionCollection.count].callback = callback;
+    actionCollection.count++;
 }
 
 void freeActionCollection()
 {
     // Free each dynamically allocated title string
-    for (int i = 0; i < collection.count; i++)
+    for (int i = 0; i < actionCollection.count; i++)
     {
-        free(collection.actions[i].title);
+        free(actionCollection.actions[i].title);
+        actionCollection.actions[i].title = NULL;
     }
 
     // Free the actions array itself
-    free(collection.actions);
+    free(actionCollection.actions);
+    actionCollection.actions = NULL;
 }
 
 void displayActions()
 {
-    for (int i = 0; i < collection.count; i++)
+    printf("\n");
+    for (int i = 0; i < actionCollection.count; i++)
     {
-        printf("%d : %s\n", collection.actions[i].root, collection.actions[i].title);
+        printf("[%d] : %s\n", actionCollection.actions[i].root, actionCollection.actions[i].title);
     }
     printf("\n\n");
 }
 
 void run()
 {
-    bool isExit = false;
-
     int choice;
     do
     {
-        // Clear console
-        displayClear();
-
-        // Shwo App name
-        displayAppName("Gestion des avion et aeroport");
-
         // display choices
         displayActions();
 
@@ -90,14 +85,26 @@ void run()
         scanf("%d", &choice);
         printf("\n");
 
-        switch (choice)
+        // To check if the choice is exist.
+        bool isFoundAction = false;
+        for (int i = 0; i < actionCollection.count; i++)
         {
-        case 1:
-            printf("select 1");
-            break;
-        case 0:
-            isExit = true;
-            break;
+            // Found action and run callback of this action.
+            if (actionCollection.actions[i].root == choice)
+            {
+                isFoundAction = true;
+                // Check if the collback not null
+                if (actionCollection.actions[i].callback != NULL)
+                {
+                    actionCollection.actions[i].callback();
+                }
+            }
         }
-    } while (!isExit);
+
+        // Not found action
+        if (!isFoundAction)
+        {
+            displayDanger("Sélectionnez une action valide s'il vous plaît.\n");
+        }
+    } while (1);
 }

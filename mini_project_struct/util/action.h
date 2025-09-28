@@ -8,7 +8,7 @@ typedef struct {
 } Action;
 
 typedef struct {
-    Action * actions;
+    Action * actions; // list of action
     int count;
     int capacity;
 } ActionCollection;
