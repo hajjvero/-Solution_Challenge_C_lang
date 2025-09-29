@@ -81,7 +81,7 @@ void run()
         // display choices
         displayActions();
 
-        displayPrimary("Sélectionnez votre action s'il vous plaît : ");
+        displayPrimary("Selectionnez votre action s'il vous plait : ");
         scanf("%d", &choice);
         printf("\n");
 
@@ -104,7 +104,7 @@ void run()
         // Not found action
         if (!isFoundAction)
         {
-            displayDanger("Sélectionnez une action valide s'il vous plaît.\n");
+            displayDanger("Selectionnez une action valide s'il vous plait.\n");
         }
     } while (1);
 }

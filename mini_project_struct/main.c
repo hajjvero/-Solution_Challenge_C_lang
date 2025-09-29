@@ -28,10 +28,11 @@ int main(void)
     // Declare action.
     addAction("Quitter le programme", 0, closeApp);
     addAction("Console claire", 1, clearApp);
-    addAction("Ajouter un aéroport", 2, addAeroport);
-    addAction("Modifier un aéroport", 3, editAeroport);
-    addAction("Supprimer un aéroport", 4, deleteAeroport);
-    addAction("Afficher la liste des aéroports", 5, allAeroports);
+    addAction("Ajouter un aeroport", 2, addAeroport);
+    addAction("Modifier un aeroport", 3, editAeroport);
+    addAction("Supprimer un aeroport", 4, deleteAeroport);
+    addAction("Afficher la liste des aeroports", 5, allAeroports);
+    addAction("Details aeroport", 6, detailsAeroport);
 
     // app name
     clearApp();

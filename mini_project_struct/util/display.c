@@ -80,5 +80,33 @@ void displayAppName(char *appName)
     {
         printf("%c", appBorder);
     }
-    printf("\n\n");
+    printf("\n");
+}
+
+void displaySubTitle(char* title) {
+    // lenght of title.
+    int lenght = strlen(title);
+
+    // calculate padding posible in lefth and right to center title.
+    int padding = (appWidth - lenght - 2) / 2;
+
+    // Border style on lefth
+    printf("\n");
+    for (int i = 0; i < padding - 2; i++)
+    {
+        printf("%c", appBorder);
+    }
+
+    // Text with 4 space
+    printf("  %s  ", title);
+
+    // Border style on Right
+    // Calculate remaining spaces (handle odd numbers correctly)
+    int remainingSpaces = appWidth - 2 - padding - lenght;
+    for (int i = 0; i < remainingSpaces; i++)
+    {
+        printf("%c", appBorder);
+    }
+    
+    printf("\n");
 }

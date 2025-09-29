@@ -3,6 +3,7 @@
 #include <string.h>
 #include "aeroport.h"
 #include "../util/display.h"
+#include <stdbool.h>
 
 AeroportCollection aeroportCollection;
 
@@ -21,13 +22,16 @@ void initAeroportCollection()
 
 void addAeroport()
 {
+    displaySubTitle("Ajouter un aéroport");
+
+    // declare object from Aeroport
     Aeroport aeroport;
 
     // Temporary nom to read the input.
     char temp_nom[256];
 
     // Nom
-    printf("\nEntrez le nom de l'aéroport : ");
+    printf("\nEntrez le nom de l'aeroport : ");
 
     // The space before % handles any leading whitespace.
     // The %255[^\n] reads up to 255 characters.
@@ -59,6 +63,8 @@ void addAeroport()
 
 void editAeroport()
 {
+    displaySubTitle("Modifier un aéroport");
+
     printf("\n Entrez id de aéroport : ");
     int id;
     scanf("%d", &id);
@@ -77,7 +83,7 @@ void editAeroport()
         printf("\nEntrez le nouveau nom de l'aéroport : ");
         scanf(" %254[^\n]", buffer); // read up to 254 chars including spaces
 
-        free(aeroport->nom);          // free old memory (if allocated with malloc/strdup)
+        free(aeroport->nom);            // free old memory (if allocated with malloc/strdup)
         aeroport->nom = strdup(buffer); // allocate new string
 
         displaySuccess("Nom de l'aéroport mis à jour avec succès !");
@@ -86,7 +92,9 @@ void editAeroport()
 
 void deleteAeroport()
 {
-    printf("\n Entrez id de l'aéroport à supprimer : ");
+    displaySubTitle("Supprimer un aeroport");
+
+    printf("\n Entrez id de l'aeroport à supprimer : ");
     int id;
     scanf("%d", &id);
 
@@ -94,7 +102,7 @@ void deleteAeroport()
 
     if (aeroport == NULL)
     {
-        displayDanger("\nAucun aéroport trouvé.");
+        displayDanger("\nAucun aeroport trouvé.");
     }
 
     // free dynamic memory (nom and flotte)
@@ -102,7 +110,8 @@ void deleteAeroport()
     free(aeroportCollection.aeroports[id - 1].flotte);
 
     // shift elements left to fill the gap
-    for (int i = id - 1; i < aeroportCollection.count - 1; i++) {
+    for (int i = id - 1; i < aeroportCollection.count - 1; i++)
+    {
         aeroportCollection.aeroports[i] = aeroportCollection.aeroports[i + 1];
     }
 
@@ -113,27 +122,43 @@ void deleteAeroport()
 
 void allAeroports()
 {
+    displaySubTitle("Afficher la liste des aeroports");
+
     if (aeroportCollection.count == 0)
     {
-        displayDanger("\nAucun aéroport disponible.");
+        displayDanger("\nAucun aeroport disponible.");
         return;
     }
 
-    printf("\n====== Liste des aéroports ======\n");
-
-    for (int i = 0; i < aeroportCollection.count - 1 ; i++)
+    for (int i = 0; i < aeroportCollection.count - 1; i++)
     {
-        printf("\n--- Aéroport %d ---\n", i + 1);
         showAeroport(&aeroportCollection.aeroports[i]);
     }
 
     if (aeroportCollection.count - 1 == 0)
     {
-        displayDanger("\nAucun aéroports disponible.");
+        displayDanger("\nAucun aeroports disponible.");
+    }
+}
+
+void detailsAeroport()
+{
+    displaySubTitle("détails aéroport");
+
+    printf("\n Entrez id de l'aéroport pour afficher les détails : ");
+    int id;
+    scanf("%d", &id);
+
+    Aeroport *aeroport = findAeroport(id);
+
+    if (aeroport == NULL)
+    {
+        displayDanger("\nAucun aéroport trouvé.");
+        return;
     }
     
-
-    printf("\n=================================\n");
+    // Entre to manage avions of current aeroport.
+    displayAvionsActions(aeroport);
 }
 
 Aeroport *findAeroport(int id)
@@ -141,12 +166,6 @@ Aeroport *findAeroport(int id)
     // Binary Search
     int start = 0, end = aeroportCollection.count - 1, mid;
 
-    // // if the list has one element.
-    // if (start == end)
-    // {
-    //     return &aeroportCollection.aeroports[id];
-    // }
-    
     while (start != end)
     {
         mid = (start + end) / 2;
@@ -173,9 +192,75 @@ void showAeroport(Aeroport *aeroport)
     if (aeroport == NULL)
         return;
 
-    printf("===== Aeroport =====\n");
-    printf("ID: %d\n", aeroport->id);
-    printf("Nom: %s\n", aeroport->nom);
-    printf("Nombre d'avions: %d\n", aeroport->count - 1);
-    printf("====================\n");
+    // Display information
+    printf("ID\t\t: %d\n", aeroport->id);
+    printf("Nom\t\t: %s\n", aeroport->nom);
+    printf("Nombre d'avions : %d\n", aeroport->count - 1);
+
+    // Add border buttom
+    for (int i = 0; i < (appWidth / 2); i++)
+    {
+        printf("%c", appBorder);
+    }
+
+    printf("\n");
+}
+
+void displayAvionsActions(Aeroport *aeroport)
+{
+    // Display information of aeroport.
+    showAeroport(aeroport);
+
+    bool isExit = false;
+    int choice;
+    do
+    {
+        // Display actions.
+        printf("\n\n");
+        printf("[%d] : %s\n", 0, "Quitter details aeroport");
+        printf("[%d] : %s\n", 1, "Ajouter un avion");
+        printf("[%d] : %s\n", 2, "Modifier un avion");
+        printf("[%d] : %s\n", 3, "Supprimer un avion");
+        printf("[%d] : %s\n", 4, "Afficher la liste des avions");
+        printf("[%d] : %s\n", 5, "Rechercher un avion");
+        printf("[%d] : %s\n", 6, "Trie les avions");
+        printf("\n\n");
+
+        displayPrimary("Selectionnez votre action s'il vous plait : ");
+
+        scanf("%d", &choice);
+        printf("\n");
+
+        switch (choice)
+        {
+        case 1:
+            // Add new avion
+            addAvion(aeroport);
+            break;
+        case 2:
+            // Edit avion
+            break;
+        case 3:
+            // Delete avion
+            break;
+        case 4:
+            // display list of avions
+            allAvions(aeroport);
+            break;
+        case 5:
+            // Search of avions by id or modele
+            break;
+        case 6:
+            // Sort avions by capacite or modele
+            break;
+        case 0:
+            // Exit from details of aeroport.
+            isExit = true;
+            break;
+        default:
+            displayDanger("Selectionnez une action valide s'il vous plait.\n");
+            break;
+        }
+
+    } while (!isExit);
 }

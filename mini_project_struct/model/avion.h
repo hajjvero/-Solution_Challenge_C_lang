@@ -1,28 +1,22 @@
 #ifndef AVION_H
 #define AVION_H
+#include "models.h"
 
-// Enum of status
-typedef enum {
-    DISPONIVLE,
-    MAINTENANCE,
-    VOL
-} Statut;
+// this function for add avion dans aeroport.
+void addAvion(Aeroport *aeroport);
 
-// Model of date
-typedef struct
-{
-    int jour;
-    int mois;
-    int annee;
-} Date;
+// this function for edit avion.
+void editAvion(Aeroport *aeroport);
 
-// Modale of avion
-typedef struct {
-    int id;
-    char* modele;
-    int capacite;
-    Statut statut;
-    Date dateEntree;
-} Avion;
+// this function for delete avion.
+void deleteAvion(Aeroport *aeroport);
 
+// this function for display list of all avions
+void allAvions(Aeroport *aeroport);
+
+// this function to get avion by id (Using insertion search).
+Avion *findAvion(Aeroport *aeroport, int id);
+
+// This function to display information of avion
+void showAvion(Avion *avion);
 #endif
